@@ -246,6 +246,45 @@ Stmt            :   VariableDef
                     {
                         $$.stmt = $1.stmt;
                     }
+                |   FOREACH '(' ForeachStmt
+                    {
+                        $$.stmt = $3.stmt;
+                    }
+                ;
+
+ForeachStmt     :   VARIDENTINEXPR ForeachStmt1
+                    {
+                        $$.stmt = new Tree.ForeachStmt(true, null, $1.ident, $1.expr, $2.expr, $2.stmt,$1.loc);
+                    }
+                |   TYPEIDENTINEXPR ForeachStmt1
+                    {
+                        $$.stmt = new Tree.ForeachStmt(false, $1.type, $1.ident, $1.expr, $2.expr, $2.stmt, $1.loc);
+                    }
+                ;
+ForeachStmt1    :    ')' Stmt
+                    {
+                        $$.expr = null;
+                        $$.stmt = $2.stmt;
+                    }
+                |   WHILE Expr ')' Stmt
+                    {
+                        $$.expr = $2.expr;
+                        $$.stmt = $4.stmt;
+                    }
+                ;
+                
+VARIDENTINEXPR  :   VAR IDENTIFIER IN Expr
+                    {
+                        $$.ident = $2.ident;
+                        $$.expr = $4.expr;
+                    }
+                ;
+TYPEIDENTINEXPR  :   Type IDENTIFIER IN Expr
+                    {
+                        $$.type = $1.type;
+                        $$.ident = $2.ident;
+                        $$.expr = $4.expr;
+                    }
                 ;
 
 IfSomething     :   IfStmt
