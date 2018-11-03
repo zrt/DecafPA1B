@@ -18,7 +18,7 @@ LITERAL
 IDENTIFIER   AND      OR    STATIC  INSTANCEOF
 LESS_EQUAL   GREATER_EQUAL  EQUAL   NOT_EQUAL
 SCOPY SEALED VAR DEFAULT IN FOREACH
-MODMOD PLUSPLUS III
+MODMOD PLUSPLUS III IL LI
 '+'  '-'  '*'  '/'  '%'  '='  '>'  '<'  '.'
 ','  ';'  '!'  '('  ')'  '['  ']'  '{'  '}'
 ':'
@@ -272,7 +272,7 @@ ForeachStmt1    :    ')' Stmt
                         $$.stmt = $4.stmt;
                     }
                 ;
-                
+
 VARIDENTINEXPR  :   VAR IDENTIFIER IN Expr
                     {
                         $$.ident = $2.ident;
@@ -464,6 +464,21 @@ Expr            :   Expr1
                     {
                         $$.expr = $1.expr;
                     }
+                |   LI Comprehension IL
+                    {
+                        $$ = $2;
+                    }
+                ;
+Comprehension   :  Expr FOR IDENTIFIER IN Expr IFExpr
+                    {
+                        $$.expr = new Tree.PyBuildArray($1.expr, $3.ident, $5.expr, $6.expr, $1.loc);
+                    }
+                ;
+IFExpr          :   IF Expr
+                    {
+                        $$.expr = $2.expr;
+                    }
+                |   /* empty */
                 ;
 
 Expr1           :   Expr2 ExprT1
