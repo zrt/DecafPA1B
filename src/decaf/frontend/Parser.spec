@@ -740,6 +740,34 @@ Constant        :   LITERAL
                     {
                         $$.expr = new Null($1.loc);
                     }
+                |   '[' ArrayConstant ']'
+                    {
+                        $$ = $2;
+                        $$.loc = $1.loc;
+                    }
+                ;
+
+ArrayConstant   :    ConstantsStmt
+                    {
+                        $$.expr = new Tree.ArrayConstant($1.stmt , $1.loc);
+                    }
+                |   /* empty */
+                    {
+                        $$.expr = new Tree.ArrayConstant(null , null);
+                    }
+                ;
+
+ConstantsStmt   :   Constant ConstantsStmtExpr
+                    {
+                        $$.stmt = new Tree.ConstantsStmt($2.stmt, $1.expr, $1.loc);
+                    }
+                ;
+
+ConstantsStmtExpr : ',' Constant ConstantsStmtExpr
+                    {
+                        $$.stmt = new Tree.ConstantsStmt($3.stmt, $2.expr, $1.loc);
+                    }
+                |   /* empty */
                 ;
 
 Actuals         :   ExprList
