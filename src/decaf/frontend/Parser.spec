@@ -17,6 +17,8 @@ PRINT  READ_INTEGER         READ_LINE
 LITERAL
 IDENTIFIER   AND      OR    STATIC  INSTANCEOF
 LESS_EQUAL   GREATER_EQUAL  EQUAL   NOT_EQUAL
+SCOPY SEALED VAR DEFAULT IN FOREACH
+MODMOD PLUSPLUS III
 '+'  '-'  '*'  '/'  '%'  '='  '>'  '<'  '.'
 ','  ';'  '!'  '('  ')'  '['  ']'  '{'  '}'
 
