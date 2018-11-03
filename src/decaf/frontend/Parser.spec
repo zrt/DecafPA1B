@@ -733,7 +733,11 @@ Expr8           :   Expr9 ExprT8
                         $$.loc = $1.loc;
                         if ($2.vec != null) {
                             for (SemValue v : $2.vec) {
-                                if (v.expr != null) {
+                                if(v.isDefault){
+                                    $$.expr = new Tree.Default($$.expr, v.stmt, $$.loc);
+                                }else if(v.isSlice){
+                                    $$.expr = new Tree.ArraySlice($$.expr, v.stmt, $$.loc);
+                                }else if (v.expr != null) {
                                     $$.expr = new Tree.Indexed($$.expr, v.expr, $$.loc);
                                 } else if (v.elist != null) {
                                     $$.expr = new Tree.CallExpr($$.expr, v.ident, v.elist, v.loc);
@@ -747,17 +751,62 @@ Expr8           :   Expr9 ExprT8
                     }
                 ;
 
-ExprT8          :   '[' Expr ']' ExprT8
+
+SubSubExprT8    :   ExprT8
                     {
-                        SemValue sem = new SemValue();
-                        sem.expr = $2.expr;
-                        $$.vec = new Vector<SemValue>();
-                        $$.vec.add(sem);
-                        if ($4.vec != null) {
-                            $$.vec.addAll($4.vec);
+                        $$ = $1;
+                    }
+                |    DEFAULT Expr8 ExprT8
+                    {
+                        $$.isDefault = true;
+                        $$.expr = $2.expr;
+                        $$.vec = $3.vec;
+                    }
+                ;
+
+SubExprT8       :   ']' SubSubExprT8
+                    {
+                        $$ = $2;
+                    }
+                |   ':' Expr ']' ExprT8
+                    {
+                        $$.isSlice = true;
+                        $$.expr = $2.expr;
+                        $$.vec = $4.vec;
+                    }
+                ;
+
+FakeExprT8      :  '[' Expr SubExprT8
+                    {
+                        if($3.isSlice){
+                            SemValue sem = new SemValue();
+                            sem.stmt = new Tree.ExprTuple($2.expr, $3.expr, $1.loc);
+                            sem.isSlice = true;
+                            $$.vec = new Vector<SemValue>();
+                            $$.vec.add(sem);
+                            if ($3.vec != null) {
+                                $$.vec.addAll($3.vec);
+                            }
+                        }else if($3.isDefault){
+                            SemValue sem = new SemValue();
+                            sem.stmt = new Tree.ExprTuple($2.expr, $3.expr, $1.loc);
+                            sem.isDefault = true;
+                            $$.vec = new Vector<SemValue>();
+                            $$.vec.add(sem);
+                            if ($3.vec != null) {
+                                $$.vec.addAll($3.vec);
+                            }
+                        }else{
+                            SemValue sem = new SemValue();
+                            sem.expr = $2.expr;
+                            $$.vec = new Vector<SemValue>();
+                            $$.vec.add(sem);
+                            if ($3.vec != null) {
+                                $$.vec.addAll($3.vec);
+                            }
                         }
                     }
-                |   '.' IDENTIFIER AfterIdentExpr ExprT8
+                  |   '.' IDENTIFIER AfterIdentExpr ExprT8
                     {
                         SemValue sem = new SemValue();
                         sem.ident = $2.ident;
@@ -768,6 +817,12 @@ ExprT8          :   '[' Expr ']' ExprT8
                         if ($4.vec != null) {
                             $$.vec.addAll($4.vec);
                         }
+                    }
+                ;
+
+ExprT8          :  FakeExprT8
+                    {
+                        $$ = $1;
                     }
                 |   /* empty */
                 ;

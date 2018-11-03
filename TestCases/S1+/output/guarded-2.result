@@ -1,14 +1,52 @@
-Exception in thread "main" java.lang.NullPointerException
-	at decaf.frontend.Parser.parse(Parser.java:85)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parseFile(Parser.java:128)
-	at decaf.Driver.compile(Driver.java:56)
-	at decaf.Driver.main(Driver.java:70)
+program
+    class Main <empty>
+        func foo voidtype
+            formals
+            stmtblock
+                guarded
+                    guard
+                        boolconst true
+                        guarded
+                            guard
+                                boolconst false
+                                print
+                                    stringconst "unreachable"
+        func bar voidtype
+            formals
+            stmtblock
+                vardef x inttype
+                assign
+                    varref x
+                    readint
+                guarded
+                    guard
+                        boolconst true
+                        if
+                            gtr
+                                varref x
+                                intconst 0
+                            guarded
+                                guard
+                                    equ
+                                        varref x
+                                        intconst 1
+                                    print
+                                        stringconst "x=1"
+                                guard
+                                    equ
+                                        varref x
+                                        intconst 2
+                                    print
+                                        stringconst "x=2"
+                        else
+                            guarded
+                                <empty>
+        static func main voidtype
+            formals
+            stmtblock
+                guarded
+                    <empty>
+                call foo
+                    <empty>
+                call bar
+                    <empty>

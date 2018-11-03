@@ -1,5 +1,6 @@
-Exception in thread "main" java.lang.NullPointerException
-	at decaf.frontend.Parser.parse(Parser.java:85)
-	at decaf.frontend.Parser.parseFile(Parser.java:128)
-	at decaf.Driver.compile(Driver.java:56)
-	at decaf.Driver.main(Driver.java:70)
+program
+    sealed class A <empty>
+    sealed class A1 A
+    class B <empty>
+    class C B
+    sealed class D B

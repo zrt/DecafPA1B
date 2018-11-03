@@ -287,6 +287,7 @@ public abstract class Tree {
     public static final int DEFAULT = ARRAYSLICE + 1;
     public static final int PYBUILDARRAY = DEFAULT + 1;
     public static final int FOREACHSTMT = PYBUILDARRAY + 1;
+    public static final int EXPRTUPLE = FOREACHSTMT +1;
 
     /**
      * Tags for Literal and TypeLiteral
@@ -1619,11 +1620,12 @@ public abstract class Tree {
     public static class ArraySlice extends Expr {
         public Expr arr,left, right;
 
-        public ArraySlice(Expr arr,Expr left, Expr right, Location loc) {
+        public ArraySlice(Expr arr,Tree tuple_, Location loc) {
             super(ARRAYSLICE, loc);
             this.arr = arr;
-            this.left = left;
-            this.right = right;
+            ExprTuple tuple = (ExprTuple)(tuple_);
+            this.left = tuple.first;
+            this.right = tuple.second;
         }
 
         @Override
@@ -1653,11 +1655,12 @@ public abstract class Tree {
     public static class Default extends Expr {
         public Expr arr,index, defa;
 
-        public Default(Expr arr,Expr index, Expr defa, Location loc) {
+        public Default(Expr arr,Tree tuple_, Location loc) {
             super(DEFAULT, loc);
             this.arr = arr;
-            this.index = index;
-            this.defa = defa;
+            ExprTuple tuple = (ExprTuple)(tuple_);
+            this.index = tuple.first;
+            this.defa = tuple.second;
         }
 
         @Override
@@ -1677,6 +1680,26 @@ public abstract class Tree {
             defa.printTo(pw);
             pw.decIndent();
             pw.decIndent();
+        }
+    }
+
+    public static class ExprTuple extends Expr {
+        public Expr first,second;
+
+        public ExprTuple(Expr first,Expr second, Location loc) {
+            super(EXPRTUPLE, loc);
+            this.first = first;
+            this.second = second;
+        }
+
+        @Override
+        public void accept(Visitor v) {
+            v.visitExprTuple(this);
+        }
+
+        @Override
+        public void printTo(IndentPrintWriter pw) {
+            pw.println("ExprTuple");
         }
     }
 
@@ -1930,6 +1953,8 @@ public abstract class Tree {
         public void visitDefault(Default that) { visitTree(that); }
 
         public void visitForeachStmt(ForeachStmt that) { visitTree(that); }
+
+        public void visitExprTuple(ExprTuple that) { visitTree(that); }
 
         public void visitTree(Tree that) {
             assert false;

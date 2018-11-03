@@ -1,27 +1,42 @@
-Exception in thread "main" java.lang.NullPointerException
-	at decaf.frontend.Parser.parse(Parser.java:85)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parse(Parser.java:94)
-	at decaf.frontend.Parser.parseFile(Parser.java:128)
-	at decaf.Driver.compile(Driver.java:56)
-	at decaf.Driver.main(Driver.java:70)
+program
+    class Main <empty>
+        static func empty arrtype inttype
+            formals
+            stmtblock
+                vardef nil arrtype inttype
+                assign
+                    varref nil
+                    newarray inttype
+                        intconst 0
+                return
+                    varref nil
+        static func main voidtype
+            formals
+            stmtblock
+                vardef ws arrtype inttype
+                vardef xs arrtype inttype
+                vardef ys arrtype booltype
+                vardef zs arrtype stringtype
+                vardef arr arrtype inttype
+                assign
+                    varref arr
+                    array concat
+                        varref ws
+                        varref xs
+                vardef err arrtype inttype
+                assign
+                    varref err
+                    array concat
+                        varref ws
+                        array concat
+                            varref xs
+                            varref ys
+                vardef arr1 arrtype inttype
+                assign
+                    varref arr1
+                    array concat
+                        varref ws
+                        array concat
+                            varref xs
+                            call empty
+                                <empty>
