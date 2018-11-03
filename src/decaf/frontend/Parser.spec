@@ -237,6 +237,16 @@ Stmt            :   VariableDef
                     {
                         $$.stmt = $1.stmt;
                     }
+                |   OCStmt
+                    {
+                        $$.stmt = $1.stmt;
+                    }
+                ;
+
+OCStmt          :   SCOPY '(' IDENTIFIER ',' Expr ')'
+                    {
+                        $$.stmt = new Tree.Scopy($3.ident, $5.expr , $1.loc);
+                    }
                 ;
 
 SimpleStmt      :   Expr Assignment

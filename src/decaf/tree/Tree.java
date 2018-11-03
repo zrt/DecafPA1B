@@ -268,6 +268,7 @@ public abstract class Tree {
     public static final int READINTEXPR = THISEXPR + 1;
     public static final int READLINEEXPR = READINTEXPR + 1;
     public static final int PRINT = READLINEEXPR + 1;
+    public static final int SCOPY = PRINT + 1;
 
     /**
      * Tags for Literal and TypeLiteral
@@ -1322,6 +1323,35 @@ public abstract class Tree {
     }
 
     /**
+     * Scopy
+     */
+    public static class Scopy extends Tree {
+
+        public String ident;
+        public Expr expr;
+
+        public Scopy(String ident, Expr expr, Location loc) {
+            super(SCOPY, loc);
+            this.ident = ident;
+            this.expr = expr;
+        }
+
+        @Override
+        public void accept(Visitor v) {
+            v.visitScopy(this);
+        }
+
+        @Override
+        public void printTo(IndentPrintWriter pw) {
+            pw.println("scopy");
+            pw.incIndent();
+            pw.println(ident);
+            expr.printTo(pw);
+            pw.decIndent();
+        }
+    }
+
+    /**
      * A generic visitor class for trees.
      */
     public static abstract class Visitor {
@@ -1461,6 +1491,30 @@ public abstract class Tree {
         public void visitTypeArray(TypeArray that) {
             visitTree(that);
         }
+
+        public void visitScopy(Scopy that) { visitTree(that); }
+
+//        public void visitIfSubStmt(IfSubStmt that) { visitTree(that); }
+//
+//        public void visitIfBranch(IfBranch that) { visitTree(that); }
+//
+//        public void visitGuardedStmt(GuardedStmt that) { visitTree(that); }
+//
+//        public void visitConstantsStmt(ConstantsStmt that) { visitTree(that); }
+//
+//        public void visitArrayConstant(ArrayConstant that) { visitTree(that); }
+//
+//        public void visitModmod(Modmod that) { visitTree(that); }
+//
+//        public void visitPlusplus(Plusplus that) { visitTree(that); }
+//
+//        public void visitArraySlice(ArraySlice that) { visitTree(that); }
+//
+//        public void visitPyBuildArray(PyBuildArray that) { visitTree(that); }
+//
+//        public void visitDefault(Default that) { visitTree(that); }
+//
+//        public void visitForeachStmt(ForeachStmt that) { visitTree(that); }
 
         public void visitTree(Tree that) {
             assert false;
