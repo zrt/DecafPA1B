@@ -83,17 +83,18 @@ public class Parser extends Table {
     private SemValue parse(int symbol, Set<Integer> follow) {
         Map.Entry<Integer, List<Integer>> result = query(symbol, lookahead); // get production by lookahead symbol
 
-
+        if(lookahead < 0) return  null;
         if(result == null){
             error();
 //            System.out.println("hahaha");
 //            System.out.println(symbol);
 //            System.out.println(lexer.getLocation());
+//            System.out.println(lookahead);
 //            printSymbolSet(follow);
             if(follow.contains(lookahead)) return null;
             while(true){
                 lookahead = lex();
-                if(lookahead <= 0) return null;
+                if(lookahead < 0) return null;
                 result = query(symbol, lookahead);
                 if(result != null) break;
                 if(follow.contains(lookahead)) return null;
@@ -112,7 +113,12 @@ public class Parser extends Table {
         for (int i = 0; i < length; i++) { // parse right-hand side symbols one by one
             int term = right.get(i);
             if(isNonTerminal(term)){
-                params[i + 1] = parse(term, followSet(term)); // for non terminals: recursively parse it
+                Set<Integer> s = followSet(term);
+                for(Integer x : follow){
+                    s.add(x);
+                }
+                params[i + 1] = parse(term, s); // for non terminals: recursively parse it
+//                if(params[i+1] == null) lasterror = 1;
             }else{
                 params[i + 1] = matchToken(term);// for terminals: match token
             }
@@ -144,7 +150,6 @@ public class Parser extends Table {
             error();
             return null;
         }
-
         lookahead = lex();
         return self;
     }
@@ -156,7 +161,7 @@ public class Parser extends Table {
      */
     public Tree.TopLevel parseFile() {
         lookahead = lex();
-        SemValue r = parse(start, new HashSet<>());
+        SemValue r = parse(start, followSet(start));
         return r == null ? null : r.prog;
     }
 

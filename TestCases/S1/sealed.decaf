@@ -1,9 +1,0 @@
-sealed class A {}
-
-sealed class A1 extends A {}
-
-class B {}
-
-class C extends B {}
-
-sealed class D extends B {}
