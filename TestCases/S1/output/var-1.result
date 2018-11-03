@@ -1,1 +1,14 @@
-*** Error at (3,9): syntax error
+program
+    class Main <empty>
+        static func main voidtype
+            formals
+            stmtblock
+                assign
+                    var x
+                    intconst 1
+                assign
+                    var y
+                    boolconst true
+                assign
+                    var z
+                    stringconst "hello"
