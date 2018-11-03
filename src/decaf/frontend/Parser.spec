@@ -346,7 +346,7 @@ SimpleStmt      :   Expr Assignment
                 |   /* empty */
                 |   VAR IDENTIFIER '=' Expr
                     {
-                        $$.stmt = new Tree.Assign(new Tree.Ident(null, $2.ident, true, $2.loc), $4.expr, $3.loc);
+                        $$.stmt = new Tree.Assign(new Tree.Ident(null, $2.ident, true, $2.loc), $4.expr, $1.loc);
                     }
                 ;
 
@@ -756,7 +756,7 @@ SubSubExprT8    :   ExprT8
                     {
                         $$ = $1;
                     }
-                |    DEFAULT Expr8 ExprT8
+                |    DEFAULT Expr9 ExprT8
                     {
                         $$.isDefault = true;
                         $$.expr = $2.expr;
@@ -820,11 +820,11 @@ FakeExprT8      :  '[' Expr SubExprT8
                     }
                 ;
 
-ExprT8          :  FakeExprT8
+ExprT8          :  /* empty */
+                |   FakeExprT8  /* [ . only exist there */
                     {
                         $$ = $1;
                     }
-                |   /* empty */
                 ;
 
 AfterIdentExpr  :   '(' Actuals ')'

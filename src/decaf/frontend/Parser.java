@@ -83,9 +83,24 @@ public class Parser extends Table {
     private SemValue parse(int symbol, Set<Integer> follow) {
         Map.Entry<Integer, List<Integer>> result = query(symbol, lookahead); // get production by lookahead symbol
 
+
         if(result == null){
             error();
-            return null;
+//            System.out.println("hahaha");
+//            System.out.println(symbol);
+//            System.out.println(lexer.getLocation());
+//            printSymbolSet(follow);
+            if(follow.contains(lookahead)) return null;
+            while(true){
+                lookahead = lex();
+                if(lookahead <= 0) return null;
+                result = query(symbol, lookahead);
+                if(result != null) break;
+                if(follow.contains(lookahead)) return null;
+            }
+//            System.out.println(lexer.getLocation());
+//            System.out.println(lookahead);
+//            System.out.println(result);
         }
 
         int actionId = result.getKey(); // get user-defined action
@@ -96,17 +111,23 @@ public class Parser extends Table {
 
         for (int i = 0; i < length; i++) { // parse right-hand side symbols one by one
             int term = right.get(i);
-            params[i + 1] = isNonTerminal(term)
-                    ? parse(term, follow) // for non terminals: recursively parse it
-                    : matchToken(term) // for terminals: match token
-                    ;
+            if(isNonTerminal(term)){
+                params[i + 1] = parse(term, followSet(term)); // for non terminals: recursively parse it
+            }else{
+                params[i + 1] = matchToken(term);// for terminals: match token
+            }
+
         }
 
         params[0] = new SemValue(); // initialize return value
         try {
+//        System.out.println(actionId);
+//        System.out.println(params);
+//        System.out.println(lookahead)
             act(actionId, params); // do user-defined action
         }catch (Exception e){
-            error();
+//            error();
+            return null;
         }
         return params[0];
     }
