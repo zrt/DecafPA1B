@@ -21,6 +21,7 @@ SCOPY SEALED VAR DEFAULT IN FOREACH
 MODMOD PLUSPLUS III
 '+'  '-'  '*'  '/'  '%'  '='  '>'  '<'  '.'
 ','  ';'  '!'  '('  ')'  '['  ']'  '{'  '}'
+':'
 
 %%
 
@@ -213,9 +214,9 @@ Stmt            :   VariableDef
                             $$.stmt = $1.stmt;
                         }
                     }
-                |   IfStmt
+                |   IF IfSomething
                     {
-                        $$.stmt = $1.stmt;
+                        $$.stmt = $2.stmt;
                     }
                 |   WhileStmt
                     {
@@ -244,6 +245,48 @@ Stmt            :   VariableDef
                 |   OCStmt
                     {
                         $$.stmt = $1.stmt;
+                    }
+                ;
+
+IfSomething     :   IfStmt
+                    {
+                        $$.stmt = $1.stmt;
+                    }
+                |   '{' GuardedStmt '}'
+                    {
+                        $$.stmt = $2.stmt;
+                        $$.stmt.loc = $1.loc;
+                    }
+                ;
+
+GuardedStmt     :   /* empty */
+                    {
+                        $$.stmt = new Tree.GuardedStmt(null, null, null);
+                    }
+                |   IfBranchList
+                    {
+                        $$.stmt = $1.stmt;
+                    }
+                ;
+IfBranchList    :   IfSubStmt  IfBranch
+                    {
+                        $$.stmt = new Tree.GuardedStmt($2.stmt, $1.stmt, $1.loc);
+                    }
+                ;
+
+IfBranch        :   III IfSubStmt IfBranch
+                    {
+                        $$.stmt = new Tree.IfBranch($3.stmt, $2.stmt , $1.loc);
+                    }
+                |   /* empty */
+                    {
+                        $$.stmt = null;
+                    }
+                ;
+
+IfSubStmt       :   Expr ':' Stmt
+                    {
+                        $$.stmt = new Tree.IfSubStmt($1.expr, $3.stmt, $1.loc);
                     }
                 ;
 
@@ -744,9 +787,9 @@ BreakStmt       :   BREAK
                     }
                 ;
 
-IfStmt          :   IF '(' Expr ')' Stmt ElseClause
+IfStmt          :   '(' Expr ')' Stmt ElseClause
                     {
-                        $$.stmt = new Tree.If($3.expr, $5.stmt, $6.stmt, $1.loc);
+                        $$.stmt = new Tree.If($2.expr, $4.stmt, $5.stmt, $1.loc);
                     }
                 ;
 

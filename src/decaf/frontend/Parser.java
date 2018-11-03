@@ -82,6 +82,12 @@ public class Parser extends Table {
      */
     private SemValue parse(int symbol, Set<Integer> follow) {
         Map.Entry<Integer, List<Integer>> result = query(symbol, lookahead); // get production by lookahead symbol
+
+        if(result == null){
+            error();
+            return null;
+        }
+
         int actionId = result.getKey(); // get user-defined action
 
         List<Integer> right = result.getValue(); // right-hand side of production
@@ -97,7 +103,11 @@ public class Parser extends Table {
         }
 
         params[0] = new SemValue(); // initialize return value
-        act(actionId, params); // do user-defined action
+        try {
+            act(actionId, params); // do user-defined action
+        }catch (Exception e){
+            error();
+        }
         return params[0];
     }
 
