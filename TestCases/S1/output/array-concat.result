@@ -30,11 +30,7 @@ program
                         varref ws
                         array concat
                             varref xs
-                            array concat
-                                varref ys
-                                array concat
-                                    varref zs
-                                    varref zzs
+                            varref ys
                 vardef arr1 arrtype inttype
                 assign
                     varref arr1

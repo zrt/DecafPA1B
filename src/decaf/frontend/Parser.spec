@@ -333,13 +333,13 @@ Oper2           :   AND
                         $$.loc = $1.loc;
                     }
                 ;
-Oper21          :   PLUSPLUS
+Oper41          :   PLUSPLUS
                     {
                         $$.counter = Tree.PLUSPLUS;
                         $$.loc = $1.loc;
                     }
                 ;
-Oper22          :   MODMOD
+Oper42          :   MODMOD
                     {
                         $$.counter = Tree.MODMOD;
                         $$.loc = $1.loc;
@@ -456,7 +456,7 @@ ExprT1          :   Oper1 Expr2 ExprT1
                 |   /* empty */
                 ;
 
-Expr2           :   Expr21 ExprT2
+Expr2           :   Expr3 ExprT2
                     {
                         $$.expr = $1.expr;
                         if ($2.svec != null) {
@@ -468,7 +468,7 @@ Expr2           :   Expr21 ExprT2
                     }
                 ;
 
-ExprT2          :   Oper2 Expr21 ExprT2
+ExprT2          :   Oper2 Expr3 ExprT2
                     {
                         $$.svec = new Vector<Integer>();
                         $$.lvec = new Vector<Location>();
@@ -485,66 +485,6 @@ ExprT2          :   Oper2 Expr21 ExprT2
                 |   /* empty */
                 ;
 
-Expr21           :   Expr22 ExprT21
-                    {
-                        $$.expr = $1.expr;
-                        if ($2.svec != null) {
-                            $$.expr = $2.evec.get($2.svec.size()-1);
-                            for (int i = $2.svec.size()-2; i >=0; --i) {
-                                $$.expr = new Tree.Binary($2.svec.get(i), $2.evec.get(i),$$.expr
-                                    , $2.lvec.get(i));
-                            }
-                            $$.expr = new Tree.Binary($2.svec.get(0), $1.expr ,$$.expr
-                                                                , $1.loc);
-                        }
-                    }
-                ;
-
-ExprT21          :   Oper21 Expr22 ExprT21
-                    {
-                        $$.svec = new Vector<Integer>();
-                        $$.lvec = new Vector<Location>();
-                        $$.evec = new Vector<Expr>();
-                        $$.svec.add($1.counter);
-                        $$.lvec.add($1.loc);
-                        $$.evec.add($2.expr);
-                        if ($3.svec != null) {
-                            $$.svec.addAll($3.svec);
-                            $$.lvec.addAll($3.lvec);
-                            $$.evec.addAll($3.evec);
-                        }
-                    }
-                |   /* empty */
-                ;
-
-Expr22           :   Expr3 ExprT22
-                    {
-                        $$.expr = $1.expr;
-                        if ($2.svec != null) {
-                            for (int i = 0; i < $2.svec.size(); ++i) {
-                                $$.expr = new Tree.Binary($2.svec.get(i), $$.expr,
-                                    $2.evec.get(i), $2.lvec.get(i));
-                            }
-                        }
-                    }
-                ;
-
-ExprT22          :   Oper22 Expr3 ExprT22
-                    {
-                        $$.svec = new Vector<Integer>();
-                        $$.lvec = new Vector<Location>();
-                        $$.evec = new Vector<Expr>();
-                        $$.svec.add($1.counter);
-                        $$.lvec.add($1.loc);
-                        $$.evec.add($2.expr);
-                        if ($3.svec != null) {
-                            $$.svec.addAll($3.svec);
-                            $$.lvec.addAll($3.lvec);
-                            $$.evec.addAll($3.evec);
-                        }
-                    }
-                |   /* empty */
-                ;
 
 Expr3           :   Expr4 ExprT3
                     {
@@ -575,7 +515,7 @@ ExprT3          :   Oper3 Expr4 ExprT3
                 |   /* empty */
                 ;
 
-Expr4           :   Expr5 ExprT4
+Expr4           :   Expr41 ExprT4
                     {
                         $$.expr = $1.expr;
                         if ($2.svec != null) {
@@ -587,7 +527,68 @@ Expr4           :   Expr5 ExprT4
                     }
                 ;
 
-ExprT4          :   Oper4 Expr5 ExprT4
+ExprT4          :   Oper4 Expr41 ExprT4
+                    {
+                        $$.svec = new Vector<Integer>();
+                        $$.lvec = new Vector<Location>();
+                        $$.evec = new Vector<Expr>();
+                        $$.svec.add($1.counter);
+                        $$.lvec.add($1.loc);
+                        $$.evec.add($2.expr);
+                        if ($3.svec != null) {
+                            $$.svec.addAll($3.svec);
+                            $$.lvec.addAll($3.lvec);
+                            $$.evec.addAll($3.evec);
+                        }
+                    }
+                |   /* empty */
+                ;
+
+Expr41           :   Expr42 ExprT41
+                    {
+                        $$.expr = $1.expr;
+                        if ($2.svec != null) {
+                            $$.expr = $2.evec.get($2.svec.size()-1);
+                            for (int i = $2.svec.size()-2; i >=0; --i) {
+                                $$.expr = new Tree.Binary($2.svec.get(i), $2.evec.get(i),$$.expr
+                                    , $2.lvec.get(i));
+                            }
+                            $$.expr = new Tree.Binary($2.svec.get(0), $1.expr ,$$.expr
+                                                                , $1.loc);
+                        }
+                    }
+                ;
+
+ExprT41          :   Oper41 Expr42 ExprT41
+                    {
+                        $$.svec = new Vector<Integer>();
+                        $$.lvec = new Vector<Location>();
+                        $$.evec = new Vector<Expr>();
+                        $$.svec.add($1.counter);
+                        $$.lvec.add($1.loc);
+                        $$.evec.add($2.expr);
+                        if ($3.svec != null) {
+                            $$.svec.addAll($3.svec);
+                            $$.lvec.addAll($3.lvec);
+                            $$.evec.addAll($3.evec);
+                        }
+                    }
+                |   /* empty */
+                ;
+
+Expr42           :   Expr5 ExprT42
+                    {
+                        $$.expr = $1.expr;
+                        if ($2.svec != null) {
+                            for (int i = 0; i < $2.svec.size(); ++i) {
+                                $$.expr = new Tree.Binary($2.svec.get(i), $$.expr,
+                                    $2.evec.get(i), $2.lvec.get(i));
+                            }
+                        }
+                    }
+                ;
+
+ExprT42          :   Oper42 Expr5 ExprT42
                     {
                         $$.svec = new Vector<Integer>();
                         $$.lvec = new Vector<Location>();
