@@ -281,9 +281,9 @@ public abstract class Tree {
     public static final int ARRAYCONSTANT = IFBRANCH + 1;
     public static final int CONSTANTSSTMT = ARRAYCONSTANT + 1;
 
-    public static final int MODMODEXPR = CONSTANTSSTMT + 1;
-    public static final int PLUSPLUSEXPR = MODMODEXPR + 1;
-    public static final int ARRAYSLICE = PLUSPLUSEXPR + 1;
+    public static final int MODMOD = CONSTANTSSTMT + 1;
+    public static final int PLUSPLUS = MODMOD + 1;
+    public static final int ARRAYSLICE = PLUSPLUS + 1;
     public static final int DEFAULT = ARRAYSLICE + 1;
     public static final int PYBUILDARRAY = DEFAULT + 1;
     public static final int FOREACHSTMT = PYBUILDARRAY + 1;
@@ -988,6 +988,12 @@ public abstract class Tree {
                 case GE:
                     binaryOperatorPrintTo(pw, "geq");
                     break;
+                case MODMOD:
+                    binaryOperatorPrintTo(pw, "array repeat");
+                    break;
+                case PLUSPLUS:
+                    binaryOperatorPrintTo(pw, "array concat");
+                    break;
             }
         }
     }
@@ -1506,9 +1512,11 @@ public abstract class Tree {
             pw.println("array const");
             pw.incIndent();
             if(constants!=null && constants.size() != 0){
+                Collections.reverse(constants);
                 for(Expr stmt : constants){
                     stmt.printTo(pw);
                 }
+                Collections.reverse(constants);
             }else{
                 pw.println("<empty>");
             }
@@ -1547,63 +1555,63 @@ public abstract class Tree {
         }
     }
 
-
-    /**
-     * Modmod
-     */
-    public static class Modmod extends Expr {
-        public Expr left, right;
-
-        public Modmod(Expr left, Expr right, Location loc) {
-            super(MODMODEXPR, loc);
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override
-        public void accept(Visitor v) {
-            v.visitModmod(this);
-        }
-
-        @Override
-        public void printTo(IndentPrintWriter pw) {
-            pw.println("array repeat");
-
-            pw.incIndent();
-            left.printTo(pw);
-            right.printTo(pw);
-            pw.decIndent();
-        }
-    }
-
-
-    /**
-     * Plusplus
-     */
-    public static class Plusplus extends Expr {
-        public Expr left, right;
-
-        public Plusplus(Expr left, Expr right, Location loc) {
-            super(PLUSPLUSEXPR, loc);
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override
-        public void accept(Visitor v) {
-            v.visitPlusplus(this);
-        }
-
-        @Override
-        public void printTo(IndentPrintWriter pw) {
-            pw.println("array concat");
-
-            pw.incIndent();
-            left.printTo(pw);
-            right.printTo(pw);
-            pw.decIndent();
-        }
-    }
+//
+//    /**
+//     * Modmod
+//     */
+//    public static class Modmod extends Expr {
+//        public Expr left, right;
+//
+//        public Modmod(Expr left, Expr right, Location loc) {
+//            super(MODMODEXPR, loc);
+//            this.left = left;
+//            this.right = right;
+//        }
+//
+//        @Override
+//        public void accept(Visitor v) {
+//            v.visitModmod(this);
+//        }
+//
+//        @Override
+//        public void printTo(IndentPrintWriter pw) {
+//            pw.println("array repeat");
+//
+//            pw.incIndent();
+//            left.printTo(pw);
+//            right.printTo(pw);
+//            pw.decIndent();
+//        }
+//    }
+//
+//
+//    /**
+//     * Plusplus
+//     */
+//    public static class Plusplus extends Expr {
+//        public Expr left, right;
+//
+//        public Plusplus(Expr left, Expr right, Location loc) {
+//            super(PLUSPLUSEXPR, loc);
+//            this.left = left;
+//            this.right = right;
+//        }
+//
+//        @Override
+//        public void accept(Visitor v) {
+//            v.visitPlusplus(this);
+//        }
+//
+//        @Override
+//        public void printTo(IndentPrintWriter pw) {
+//            pw.println("array concat");
+//
+//            pw.incIndent();
+//            left.printTo(pw);
+//            right.printTo(pw);
+//            pw.decIndent();
+//        }
+//    }
 
     /**
      * ArraySlice
@@ -1911,9 +1919,9 @@ public abstract class Tree {
 
         public void visitArrayConstant(ArrayConstant that) { visitTree(that); }
 
-        public void visitModmod(Modmod that) { visitTree(that); }
-
-        public void visitPlusplus(Plusplus that) { visitTree(that); }
+//        public void visitModmod(Modmod that) { visitTree(that); }
+//
+//        public void visitPlusplus(Plusplus that) { visitTree(that); }
 
         public void visitArraySlice(ArraySlice that) { visitTree(that); }
 
